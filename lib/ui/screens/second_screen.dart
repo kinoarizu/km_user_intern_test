@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:suitmedia_intern_test_app/bloc/second_screen_bloc.dart';
 import 'package:suitmedia_intern_test_app/ui/screens/third_screen.dart';
 
 class SecondScreen extends StatelessWidget {
@@ -50,26 +52,38 @@ class SecondScreen extends StatelessWidget {
                 fontWeight: FontWeight.bold,
               ),
             ),
-            const Expanded(
-              child: Center(
-                child: Text(
-                  "Selected User Name",
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
+            Expanded(
+              child: BlocBuilder<SecondScreenBloc, SecondScreenState>(
+                builder: (context, state) {
+                  String selectedUser = '';
+                  if (state is SelectedUser) {
+                    selectedUser += state.name;
+                  }
+                  return Center(
+                    child: Text(
+                      selectedUser,
+                      style: const TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  );
+                },
               ),
             ),
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: () {
-                  Navigator.of(context).push<String>(
+                onPressed: () async {
+                  final selectedName = await Navigator.of(context).push<String>(
                     MaterialPageRoute(
                       builder: (_) => const ThirdScreen(),
                     ),
                   );
+                  if (selectedName != null) {
+                    // ignore: use_build_context_synchronously
+                    context.read<SecondScreenBloc>().add(SetSelectedUser(selectedName));
+                  }
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF2A6171),
@@ -88,7 +102,7 @@ class SecondScreen extends StatelessWidget {
                   ),
                 ),
               ),
-            )
+            ),
           ],
         ),
       ),

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:suitmedia_intern_test_app/bloc/first_screen_bloc.dart';
 import 'package:suitmedia_intern_test_app/ui/screens/second_screen.dart';
 
 class FirstScreen extends StatefulWidget {
@@ -100,30 +102,41 @@ class _FirstScreenState extends State<FirstScreen> {
                 ),
               ),
               const SizedBox(height: 45),
-              Column(
-                children: [
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: () {},
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF2A6171),
-                        padding: const EdgeInsets.symmetric(vertical: 13),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(15),
+              BlocListener<FirstScreenBloc, FirstScreenState>(
+                listener: (context, state) {
+                  if (state is PalindromeState) {
+                    _showDialog('isPalindrome');
+                  } else if (state is NotPalindromeState) {
+                    _showDialog('not palindrome');
+                  }
+                },
+                child: Column(
+                  children: [
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: () => context.read<FirstScreenBloc>().add(
+                          CheckPalindrome(palindromeController.text),
                         ),
-                      ),
-                      child: const Text(
-                        "CHECK",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF2A6171),
+                          padding: const EdgeInsets.symmetric(vertical: 13),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(15),
+                          ),
+                        ),
+                        child: const Text(
+                          "CHECK",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
               const SizedBox(height: 15),
               SizedBox(
@@ -157,6 +170,27 @@ class _FirstScreenState extends State<FirstScreen> {
           ),
         ),
       ),
+    );
+  }
+
+  void _showDialog(String message) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          content: Text(message),
+          actions: [
+            TextButton(
+              onPressed: () {
+                BlocProvider.of<FirstScreenBloc>(context)
+                  .add(ResetPalindrome());
+                Navigator.of(context).pop();
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        );
+      },
     );
   }
 }

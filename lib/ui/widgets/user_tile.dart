@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:suitmedia_intern_test_app/models/user_model.dart';
 
 class UserTile extends StatelessWidget {
-  const UserTile({super.key});
+  final User user;
+
+  const UserTile(this.user, {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -9,8 +12,8 @@ class UserTile extends StatelessWidget {
       children: [
         Row(
           children: [
-            const Padding(
-              padding: EdgeInsets.symmetric(
+             Padding(
+              padding: const EdgeInsets.symmetric(
                 vertical: 8.0,
                 horizontal: 16.0,
               ),
@@ -18,7 +21,7 @@ class UserTile extends StatelessWidget {
                 child: CircleAvatar(
                   radius: 30,
                   backgroundImage: NetworkImage(
-                    'https://reqres.in/img/faces/1-image.jpg',
+                    user.avatar,
                   ),
                 ),
               ),
@@ -26,15 +29,15 @@ class UserTile extends StatelessWidget {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                 const Text(
-                  'John Doe',
-                  style: TextStyle(
+                  Text(
+                  '${user.firstName} ${user.lastName}',
+                  style: const TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
                 Text(
-                  'johndoe@gmail.com',
+                  user.email,
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w500,
